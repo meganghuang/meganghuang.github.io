@@ -1,19 +1,283 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Megan Huang</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Megan Huang</title>
+  <link rel="icon" href="assets/avatar.png">
+  <style>
+    :root {
+      --bg: #f3f3f3;
+      --tab-active: #e8e8e8;
+      --text: #595959;
+      --accent: #c5aca4;
+      --c-intro: #c5aca4;
+      --c-cv: #6086bb;
+      --c-research: #87a84f;
+      --c-teaching: #ffbc6d;
+      --c-hobby: #e06666;
+      /* 1 unit = 1pt on the 720x405 design slide, scaled to fit the window */
+      --u: min(100vw / 720, 100vh / 405);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body { height: 100%; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      overflow: hidden;
+    }
+
+    .stage {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: calc(var(--u) * 720);
+      height: calc(var(--u) * 405);
+      transform: translate(-50%, -50%);
+    }
+
+    /* avatar */
+    .avatar {
+      position: absolute;
+      left: calc(var(--u) * 34);
+      top: calc(var(--u) * 35);
+      width: calc(var(--u) * 113);
+      height: calc(var(--u) * 113);
+      border-radius: 50%;
+      background: var(--accent);
+      overflow: hidden;
+    }
+    .avatar img {
+      position: absolute;
+      left: calc(var(--u) * -16);
+      top: calc(var(--u) * -5);
+      width: calc(var(--u) * 134);
+      height: calc(var(--u) * 134);
+    }
+
+    /* main text */
+    .panel { display: none; }
+    .panel.active { display: block; }
+
+    .title {
+      position: absolute;
+      left: calc(var(--u) * 185);
+      top: calc(var(--u) * 26);
+      font-size: calc(var(--u) * 72);
+      font-weight: 700;
+      line-height: 1;
+      letter-spacing: -0.01em;
+      color: #000;
+    }
+    .sub {
+      position: absolute;
+      left: calc(var(--u) * 189);
+      top: calc(var(--u) * 108);
+      font-size: calc(var(--u) * 15);
+      line-height: calc(var(--u) * 18);
+      color: var(--accent);
+    }
+
+    /* socials */
+    .socials {
+      position: absolute;
+      left: calc(var(--u) * 506);
+      top: calc(var(--u) * 30);
+      width: calc(var(--u) * 182);
+      height: calc(var(--u) * 21);
+      border-radius: calc(var(--u) * 3);
+      background: var(--tab-active);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: calc(var(--u) * 16);
+    }
+    .socials a {
+      display: flex;
+      align-items: center;
+      gap: calc(var(--u) * 4);
+      color: var(--text);
+      text-decoration: none;
+      font-size: calc(var(--u) * 8);
+      transition: color 0.15s ease;
+    }
+    .socials a:hover { color: #000; }
+    .socials svg {
+      width: calc(var(--u) * 9);
+      height: calc(var(--u) * 9);
+      fill: currentColor;
+    }
+
+    /* tabs */
+    .tabs {
+      position: absolute;
+      left: calc(var(--u) * 34);
+      top: calc(var(--u) * 266);
+      width: calc(var(--u) * 113);
+      list-style: none;
+    }
+    .tabs .highlight {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: calc(var(--u) * 21.2);
+      border-radius: calc(var(--u) * 3);
+      background: var(--tab-active);
+      transition: transform 0.22s cubic-bezier(.3, .7, .3, 1);
+      pointer-events: none;
+    }
+    .tabs a {
+      position: relative;
+      display: flex;
+      align-items: center;
+      height: calc(var(--u) * 21.2);
+      padding-left: calc(var(--u) * 8.8);
+      color: var(--text);
+      text-decoration: none;
+      font-size: calc(var(--u) * 9.9);
+      white-space: nowrap;
+    }
+    .tabs a.selected { font-weight: 700; }
+    .tabs .dot {
+      width: calc(var(--u) * 6.4);
+      height: calc(var(--u) * 6.4);
+      margin-right: calc(var(--u) * 6.8);
+      border-radius: 50%;
+      border: calc(var(--u) * 1.65) solid var(--c);
+      background: transparent;
+      flex: none;
+      transition: background-color 0.15s ease;
+    }
+    .tabs a.lit .dot { background: var(--c); }
+
+    /* phones and narrow windows: stack everything */
+    @media (max-width: 760px), (max-aspect-ratio: 1/1) {
+      :root { --u: 2px; }
+      body { overflow: auto; }
+      .stage {
+        position: static;
+        transform: none;
+        width: auto;
+        height: auto;
+        padding: 32px 16px 48px;
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+      }
+      .avatar, .title, .sub, .socials, .tabs { position: relative; left: auto; top: auto; }
+      .avatar { width: 140px; height: 140px; }
+      .avatar img { left: -20px; top: -6px; width: 166px; height: 166px; }
+      .title { font-size: 72px; margin-left: -4px; }
+      .sub { font-size: 18px; line-height: 1.25; margin-top: 8px; }
+      .socials { order: 3; width: 100%; max-width: 340px; height: 40px; gap: 28px; }
+      .socials a { font-size: 15px; gap: 8px; }
+      .socials svg { width: 17px; height: 17px; }
+      .tabs { order: 4; width: 100%; max-width: 340px; }
+      .tabs .highlight, .tabs a { height: 42px; }
+      .tabs .highlight { border-radius: 6px; }
+      .tabs a { font-size: 17px; padding-left: 16px; }
+      .tabs .dot { width: 12px; height: 12px; border-width: 3px; margin-right: 12px; }
+    }
+  </style>
 </head>
 <body>
-    <h1>Hi, I'm Megan!</h1>
-    <p>Bioinformatics | Computational Biology</p>
+  <div class="stage">
+    <div class="avatar">
+      <img src="assets/avatar.png" alt="Cartoon of a white bear typing on a laptop">
+    </div>
 
-    <h2>About Me</h2>
-    <p>
-        I'm a computational biology student interested in genomics,
-        bioinformatics, and data science.
-    </p>
+    <main>
+      <section class="panel" id="intro">
+        <h1 class="title">hi.</h1>
+        <p class="sub">
+          my name is megan.<br>
+          please stay however long you’d like!<br>
+          [this page is still a work in progress]
+        </p>
+      </section>
+      <section class="panel" id="cv">
+        <h1 class="title">cv.</h1>
+        <p class="sub">coming soon.</p>
+      </section>
+      <section class="panel" id="research">
+        <h1 class="title">research.</h1>
+        <p class="sub">coming soon.</p>
+      </section>
+      <section class="panel" id="teaching">
+        <h1 class="title">teaching.</h1>
+        <p class="sub">coming soon.</p>
+      </section>
+      <section class="panel" id="hobby">
+        <h1 class="title">hobbies.</h1>
+        <p class="sub">coming soon.</p>
+      </section>
+    </main>
 
-    <h2>Projects</h2>
-    <p>My projects will go here.</p>
+    <nav class="socials" aria-label="Social links">
+      <a href="https://www.linkedin.com/in/meganghuang/" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 4.37v6.311zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+        linkedin
+      </a>
+      <a href="https://github.com/meganghuang" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
+        github
+      </a>
+    </nav>
+
+    <ul class="tabs" aria-label="Sections">
+      <li class="highlight" aria-hidden="true"></li>
+      <li><a href="#intro" style="--c: var(--c-intro)"><span class="dot"></span>intro</a></li>
+      <li><a href="#cv" style="--c: var(--c-cv)"><span class="dot"></span>CV</a></li>
+      <li><a href="#research" style="--c: var(--c-research)"><span class="dot"></span>research projects</a></li>
+      <li><a href="#teaching" style="--c: var(--c-teaching)"><span class="dot"></span>teaching</a></li>
+      <li><a href="#hobby" style="--c: var(--c-hobby)"><span class="dot"></span>hobby portfolio</a></li>
+    </ul>
+  </div>
+
+  <script>
+    const tabs = [...document.querySelectorAll('.tabs a')];
+    const highlight = document.querySelector('.tabs .highlight');
+    const nav = document.querySelector('.tabs');
+    let selected = tabs[0];
+
+    // slide the grey box to a tab and fill in that tab's dot
+    function light(tab) {
+      highlight.style.transform = `translateY(${tab.offsetTop}px)`;
+      tabs.forEach(t => t.classList.toggle('lit', t === tab || t === selected));
+    }
+
+    function select(id) {
+      selected = tabs.find(t => t.hash === '#' + id) || tabs[0];
+      tabs.forEach(t => {
+        t.classList.toggle('selected', t === selected);
+        if (t === selected) t.setAttribute('aria-current', 'page');
+        else t.removeAttribute('aria-current');
+      });
+      document.querySelectorAll('.panel').forEach(p =>
+        p.classList.toggle('active', '#' + p.id === selected.hash));
+      light(selected);
+    }
+
+    tabs.forEach(t => {
+      t.addEventListener('mouseenter', () => light(t));
+      t.addEventListener('focus', () => light(t));
+    });
+    nav.addEventListener('mouseleave', () => light(selected));
+    nav.addEventListener('focusout', () => light(selected));
+    window.addEventListener('hashchange', () => select(location.hash.slice(1)));
+    window.addEventListener('resize', () => light(selected));
+
+    // place the box without animating on first load
+    highlight.style.transition = 'none';
+    select(location.hash.slice(1));
+    highlight.offsetHeight;
+    highlight.style.transition = '';
+  </script>
 </body>
 </html>
