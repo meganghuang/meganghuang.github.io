@@ -120,9 +120,8 @@
       top: calc(var(--u) * 85);
       width: calc(var(--u) * 500);
       height: calc(var(--u) * 341);
-      border: calc(var(--u) * 0.75) solid var(--text);
       border-radius: calc(var(--u) * 3);
-      background: #eeeeee;
+      background: #fff;
       overflow: hidden;
     }
     .embed iframe {
@@ -130,6 +129,7 @@
       width: 100%;
       height: 100%;
       border: 0;
+      transform-origin: 0 0;
     }
 
     /* socials */
@@ -223,7 +223,7 @@
       .avatar { --u: 1.24px; }
       .heading { font-size: 40px; }
       .heading + .sub { top: auto; }
-      .embed { width: 100%; height: 75vh; margin-top: 16px; border-width: 1px; border-radius: 6px; }
+      .embed { width: 100%; height: 75vh; margin-top: 16px; border-radius: 6px; }
       .title { font-size: 72px; margin-left: -4px; }
       .sub { font-size: 18px; line-height: 1.25; margin-top: 8px; }
       .socials { order: 3; width: 100%; max-width: 340px; height: 40px; gap: 28px; }
@@ -317,6 +317,27 @@
       document.querySelectorAll('.panel').forEach(p =>
         p.classList.toggle('active', '#' + p.id === selected.hash));
       light(selected);
+      fitCV();
+    }
+
+    // The published doc is a fixed 816px page inside an 8px margin. Lay it out
+    // at that width, trim the margin, and scale it to fill the box exactly.
+    // Phones skip the scaling so the text stays readable.
+    const DOC_W = 816, DOC_MARGIN = 8;
+    const cvBox = document.querySelector('.embed');
+    const cvFrame = cvBox.querySelector('iframe');
+    const phone = matchMedia('(max-width: 760px), (max-aspect-ratio: 1/1)');
+    function fitCV() {
+      const w = cvBox.clientWidth;
+      if (!w || phone.matches) {
+        cvFrame.style.cssText = '';
+        return;
+      }
+      const s = w / DOC_W;
+      cvFrame.style.width = DOC_W + 2 * DOC_MARGIN + 'px';
+      cvFrame.style.height = cvBox.clientHeight / s + 2 * DOC_MARGIN + 'px';
+      cvFrame.style.transform =
+        `translate(${-DOC_MARGIN * s}px, ${-DOC_MARGIN * s}px) scale(${s})`;
     }
 
     tabs.forEach(t => {
@@ -326,7 +347,7 @@
     nav.addEventListener('mouseleave', () => light(selected));
     nav.addEventListener('focusout', () => light(selected));
     window.addEventListener('hashchange', () => select(location.hash.slice(1)));
-    window.addEventListener('resize', () => light(selected));
+    window.addEventListener('resize', () => { light(selected); fitCV(); });
 
     // place the box without animating on first load
     highlight.style.transition = 'none';
