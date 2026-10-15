@@ -41,24 +41,44 @@
       transform: translate(-50%, -50%);
     }
 
-    /* avatar */
+    /* avatar: the bear is clipped to the circle, except for its ears and
+       right side, which poke out (same clip shape as the design slide) */
     .avatar {
       position: absolute;
-      left: calc(var(--u) * 34);
-      top: calc(var(--u) * 35);
-      width: calc(var(--u) * 113);
-      height: calc(var(--u) * 113);
-      border-radius: 50%;
-      background: var(--accent);
-      overflow: hidden;
-    }
-    .avatar img {
-      position: absolute;
-      left: calc(var(--u) * -16);
-      top: calc(var(--u) * -5);
+      left: calc(var(--u) * 18);
+      top: calc(var(--u) * 30);
       width: calc(var(--u) * 134);
       height: calc(var(--u) * 134);
     }
+    .avatar img {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: calc(var(--u) * 134);
+      height: calc(var(--u) * 134);
+    }
+    .avatar .circle {
+      position: absolute;
+      left: calc(var(--u) * 16);
+      top: calc(var(--u) * 5);
+      width: calc(var(--u) * 113);
+      height: calc(var(--u) * 113);
+      border-radius: 50%;
+      background: var(--c-intro);
+      overflow: hidden;
+      transition: background-color 0.3s ease;
+    }
+    .avatar .circle img {
+      left: calc(var(--u) * -16);
+      top: calc(var(--u) * -5);
+    }
+    .avatar .pop {
+      clip-path: polygon(100% 0, 100% 77.2%, 74.3% 57.2%, 74.3% 25.8%, 33.5% 25.8%, 0 0);
+    }
+    body[data-tab="cv"] .avatar .circle { background: var(--c-cv); }
+    body[data-tab="research"] .avatar .circle { background: var(--c-research); }
+    body[data-tab="teaching"] .avatar .circle { background: var(--c-teaching); }
+    body[data-tab="hobby"] .avatar .circle { background: var(--c-hobby); }
 
     /* main text */
     .panel { display: none; }
@@ -81,6 +101,35 @@
       font-size: calc(var(--u) * 15);
       line-height: calc(var(--u) * 18);
       color: var(--accent);
+    }
+
+    /* section pages: small coloured heading, content below */
+    .heading {
+      position: absolute;
+      left: calc(var(--u) * 185);
+      top: calc(var(--u) * 26);
+      font-size: calc(var(--u) * 30);
+      font-weight: 700;
+      line-height: 1;
+      color: var(--c);
+    }
+    .heading + .sub { top: calc(var(--u) * 62); }
+    .embed {
+      position: absolute;
+      left: calc(var(--u) * 188);
+      top: calc(var(--u) * 85);
+      width: calc(var(--u) * 500);
+      height: calc(var(--u) * 341);
+      border: calc(var(--u) * 0.75) solid var(--text);
+      border-radius: calc(var(--u) * 3);
+      background: #eeeeee;
+      overflow: hidden;
+    }
+    .embed iframe {
+      display: block;
+      width: 100%;
+      height: 100%;
+      border: 0;
     }
 
     /* socials */
@@ -170,9 +219,11 @@
         flex-direction: column;
         gap: 24px;
       }
-      .avatar, .title, .sub, .socials, .tabs { position: relative; left: auto; top: auto; }
-      .avatar { width: 140px; height: 140px; }
-      .avatar img { left: -20px; top: -6px; width: 166px; height: 166px; }
+      .avatar, .title, .heading, .sub, .embed, .socials, .tabs { position: relative; left: auto; top: auto; }
+      .avatar { --u: 1.24px; }
+      .heading { font-size: 40px; }
+      .heading + .sub { top: auto; }
+      .embed { width: 100%; height: 75vh; margin-top: 16px; border-width: 1px; border-radius: 6px; }
       .title { font-size: 72px; margin-left: -4px; }
       .sub { font-size: 18px; line-height: 1.25; margin-top: 8px; }
       .socials { order: 3; width: 100%; max-width: 340px; height: 40px; gap: 28px; }
@@ -189,7 +240,8 @@
 <body>
   <div class="stage">
     <div class="avatar">
-      <img src="assets/avatar.png" alt="Cartoon of a white bear typing on a laptop">
+      <div class="circle"><img src="assets/avatar.png" alt="Cartoon of a white bear typing on a laptop"></div>
+      <img class="pop" src="assets/avatar.png" alt="">
     </div>
 
     <main>
@@ -202,19 +254,21 @@
         </p>
       </section>
       <section class="panel" id="cv">
-        <h1 class="title">cv.</h1>
-        <p class="sub">coming soon.</p>
+        <h1 class="heading" style="--c: var(--c-cv)">CV</h1>
+        <div class="embed">
+          <iframe src="https://docs.google.com/document/d/e/2PACX-1vR5LkGLV_rBUeQ80SEDFxemBNiqGIKILBTPh2ssLh1FfqDiQ3mfqOHJVV2tIodWiLDwrD0xJZCg_75J/pub?embedded=true" title="Megan Huang CV" loading="lazy"></iframe>
+        </div>
       </section>
       <section class="panel" id="research">
-        <h1 class="title">research.</h1>
+        <h1 class="heading" style="--c: var(--c-research)">research projects</h1>
         <p class="sub">coming soon.</p>
       </section>
       <section class="panel" id="teaching">
-        <h1 class="title">teaching.</h1>
+        <h1 class="heading" style="--c: var(--c-teaching)">teaching</h1>
         <p class="sub">coming soon.</p>
       </section>
       <section class="panel" id="hobby">
-        <h1 class="title">hobbies.</h1>
+        <h1 class="heading" style="--c: var(--c-hobby)">hobby portfolio</h1>
         <p class="sub">coming soon.</p>
       </section>
     </main>
@@ -259,6 +313,7 @@
         if (t === selected) t.setAttribute('aria-current', 'page');
         else t.removeAttribute('aria-current');
       });
+      document.body.dataset.tab = selected.hash.slice(1);
       document.querySelectorAll('.panel').forEach(p =>
         p.classList.toggle('active', '#' + p.id === selected.hash));
       light(selected);
